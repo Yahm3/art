@@ -1,11 +1,17 @@
 TARGET = main.o 
 
-SRC = main.c
+SRCDIR = src
+INCLUDEDIR = include
+#BUILDIR = build
 
-CFALG = gcc -Wall #-std=c23
+CFLAG = gcc -Wall #-std=c23
+SRC_MAIN_PROJECT = $(SRCDIR)/main.c
+
+#$(BUILDIR):
+#@mkdir -p $(BUILDIR)
 
 $(TARGET):
-	$(CFALG) $(SRC) -o $(TARGET)
+	$(CFLAG) $(SRC_MAIN_PROJECT) -o $(TARGET)
 
 run: 
 	./$(TARGET)
