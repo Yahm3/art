@@ -5,7 +5,11 @@ INCLUDEDIR = include
 #BUILDIR = build
 
 CFLAG = gcc -Wall #-std=c23
-SRC_MAIN_PROJECT = $(SRCDIR)/main.c
+SRC_MAIN_PROJECT = $(SRCDIR)/main.c\
+									$(SRCDIR)/animation.c\
+									$(SRCDIR)/argparse.c\
+									$(SRCDIR)/car_patterns.c\
+									$(SRCDIR)/help.c
 
 #$(BUILDIR):
 #@mkdir -p $(BUILDIR)
