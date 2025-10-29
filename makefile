@@ -4,10 +4,9 @@ SRCDIR = src
 INCLUDEDIR = include
 #BUILDIR = build
 
-CFLAG = gcc -Wall #-std=c23
+CFLAG = gcc -Wall -lncurses -lmath #-std=c23
 SRC_MAIN_PROJECT = $(SRCDIR)/main.c\
 									$(SRCDIR)/animation.c\
-									$(SRCDIR)/argparse.c\
 									$(SRCDIR)/car_patterns.c\
 									$(SRCDIR)/help.c
 
