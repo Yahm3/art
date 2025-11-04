@@ -4,9 +4,9 @@ SRCDIR = src
 INCLUDEDIR = include
 #BUILDIR = build
 
-CFLAG = gcc -Wall -lncurses -lmath #-std=c23
+CFLAG = gcc -Wall #-std=c23
+CFLAG_EXTRA = -lncurses -g
 SRC_MAIN_PROJECT = $(SRCDIR)/main.c\
-									$(SRCDIR)/animation.c\
 									$(SRCDIR)/car_patterns.c\
 									$(SRCDIR)/help.c
 
@@ -14,7 +14,7 @@ SRC_MAIN_PROJECT = $(SRCDIR)/main.c\
 #@mkdir -p $(BUILDIR)
 
 $(TARGET):
-	$(CFLAG) $(SRC_MAIN_PROJECT) -o $(TARGET)
+	$(CFLAG) $(SRC_MAIN_PROJECT) -o $(TARGET) $(CFLAG_EXTRA)
 
 run: 
 	./$(TARGET)
