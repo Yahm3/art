@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <time.h>
+#include <unistd.h>
 #define DELAY 50000
 
 typedef struct {
@@ -18,43 +18,45 @@ typedef struct {
   int dy;
 } Car;
 
-// Global animation settings settable via flags
-int z_direction = 1; /* 1 = forward (small->large), -1 = backward (large->small) */
-int paint_mode = 0;  /* 0 = normal, 1 = painted/color (not yet implemented) */
+int z_direction = 1;
+int paint_mode = 0;
 
 void check_flag(char flag) {
   switch (flag) {
   case 'C':
   case 'c':
-    // Enable car animation (reserved for future use)
+    // :NOTE: Enable car animation (reserved for future use)
     break;
 
   case 'F':
   case 'f':
-    help_menu();
+    z_direction = 1;
     break;
 
   case 'B':
   case 'b':
-    // Backward Z-Depth: large -> small
     z_direction = -1;
     break;
 
   case 'P':
   case 'p':
-    // TODO: Painted car animation
+    /* TODO: Painted car animation
 
-//  case 'N':
-//  case 'n':
-//    // Use painted/color mode (not fully implemented)
-//    paint_mode = 1;
-//    break;
-//
+     case 'N':
+     case 'n':
+       // Use painted/color mode (not fully implemented)
+       paint_mode = 1;
+       break;
+    */
+
   case 'N':
   case 'n':
     // Normal (non-colored) mode
     paint_mode = 0;
     break;
+
+  default:
+    help_menu();
     break;
   }
 }
@@ -110,8 +112,7 @@ int main(int argc, char *argv[]) {
   option(argc, argv);
   initscr();
   cbreak();
-  noecho(); //: Hide the cursor
-  //: NOTE: Declare the value
+  noecho(); //: NOTE: Hide the cursor
   int max_x, max_y;
   getmaxyx(stdscr, max_y, max_x);
 
@@ -120,56 +121,54 @@ int main(int argc, char *argv[]) {
   char *message = "Message";
   int msg_len = strlen(message);
 
-  curs_set(0);
-  /* Configure non-blocking input so animation can run while waiting for a key */
+  curs_set(2);
   nodelay(stdscr, TRUE);
   keypad(stdscr, TRUE);
 
-  /* Z-depth order: small -> medium -> large (index order). We'll cycle through
-     these to create the illusion of cars moving closer/farther. Direction is
-     controlled by the `z_direction` flag set from CLI options. */
   int car_order[3] = {SMALL_CAR, MEDIUM_CAR, LARGE_CAR};
   const int stages = 3;
   int stage_idx = (z_direction == 1) ? 0 : (stages - 1);
   time_t stage_start = time(NULL);
-  const int stage_seconds = 4; /* display each car for 4 seconds */
+  const int stage_seconds = 3;
 
   while (1) {
     int ch = getch();
     if (ch != ERR) {
-      /* any key pressed exits the animation loop */
+      /*:NOTE: any key pressed exits the animation loop */
       break;
     }
 
-    /* keep terminal size up-to-date */
     getmaxyx(stdscr, max_y, max_x);
 
-    /* obtain pattern and its length */
     int pattern_len = 0;
-    const char **pattern = select_car_pattern(car_order[stage_idx], &pattern_len);
+    const char **pattern =
+        select_car_pattern(car_order[stage_idx], &pattern_len);
 
-    /* draw centered */
     clear();
     int start_row = (max_y - pattern_len) / 2;
-    if (start_row < 0) start_row = 0;
+    if (start_row < 0)
+      start_row = 0;
     for (int i = 0; i < pattern_len; ++i) {
       const char *line = pattern[i];
       int s_len = strlen(line);
       int start_col = (max_x - s_len) / 2;
-      if (start_col < 0) start_col = 0;
+      if (start_col < 0)
+        start_col = 0;
       mvprintw(start_row + i, start_col, "%s", line);
     }
-    /* optional small status message at bottom-left */
-    mvprintw(max_y - 1, 0, "Press any key to quit (z-direction=%d)", z_direction);
+
+    mvprintw(max_y - 1, 0, "Press any key to quit (z-direction=%d)",
+             z_direction);
     refresh();
 
-    /* advance stage after interval */
-    if (difftime(time(NULL), stage_start) >= stage_seconds) {
+    time_t difT = time(NULL) - stage_start;
+    if (difT >= stage_seconds) {
       stage_start = time(NULL);
-      if (z_direction == 1)
+      if (z_direction == 1) {
         stage_idx = (stage_idx + 1) % stages;
-      else
+      } else {
         stage_idx = (stage_idx - 1 + stages) % stages;
+      }
     }
 
     usleep(DELAY);

@@ -18,6 +18,7 @@ $(TARGET):
 
 run: 
 	./$(TARGET)
+
 debug: 
 	./$(TARGET) --debug
 
