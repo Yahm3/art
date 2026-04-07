@@ -8,5 +8,6 @@ I had accidentally mistyped "ls" to "sl" and saw a train and that changed me :)
 
 # Motivated by:
 
-> [SL(Steam Locomotive)](https://www.cyberciti.biz/tips/displays-animations-when-accidentally-you-type-sl-instead-of-ls.html)
+> [SL(Steam Locomotive)](https://github.com/mtoyoda/sl)
+
 > [Cbonsai](https://github.com/jakobrees/cbonsai)
