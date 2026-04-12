@@ -3,6 +3,7 @@
 #include <curses.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -20,7 +21,6 @@ typedef struct {
 
 int z_direction = 1;
 int paint_mode = 0;
-
 void check_flag(char flag) {
   switch (flag) {
   case 'C':
@@ -57,6 +57,7 @@ void check_flag(char flag) {
 
   default:
     help_menu();
+    exit(1);
     break;
   }
 }
@@ -90,20 +91,21 @@ const char **select_car_pattern(int car_type, int *out_len) {
 void option(int argc, char *argv[]) {
   if (argc >= 4) {
     help_menu();
-    return;
-  }
-
-  for (int i = 1; i < argc; ++i) {
-    char *arg = argv[i];
-    printf("argv[%d]: %s\n", i, arg);
-    if (arg[0] == '-' && arg[1] != '\n') {
-      if (arg[1] == '-' && arg[2] == 'h') {
-        help_menu();
+    exit(1);
+  } else {
+    for (int i = 1; i < argc; ++i) {
+      char *arg = argv[i];
+      if (arg[0] == '-' && arg[1] != '\n') {
+        if (arg[1] == '-' && arg[2] == 'h') {
+          help_menu();
+          exit(1); //: NOTE: Show menu and exit
+        } else {
+          char flag = arg[1];
+          check_flag(flag);
+        }
+      } else {
+        printf("Argument not found everything will run on default");
       }
-      char flag = arg[1];
-      check_flag(flag);
-    } else {
-      printf("Argument not found everything will run on default");
     }
   }
 }
@@ -116,10 +118,10 @@ int main(int argc, char *argv[]) {
   int max_x, max_y;
   getmaxyx(stdscr, max_y, max_x);
 
-  int y = max_y / 2;
-  int x = 0;
-  char *message = "Message";
-  int msg_len = strlen(message);
+  // int y = max_y / 2;
+  // int x = 0;
+  // char *message = "Message";
+  // int msg_len = strlen(message);
 
   curs_set(2);
   nodelay(stdscr, TRUE);
@@ -152,9 +154,11 @@ int main(int argc, char *argv[]) {
       const char *line = pattern[i];
       int s_len = strlen(line);
       int start_col = (max_x - s_len) / 2;
-      if (start_col < 0)
+      if (start_col < 0) {
         start_col = 0;
+      }
       mvprintw(start_row + i, start_col, "%s", line);
+      refresh();
     }
 
     mvprintw(max_y - 1, 0, "Press any key to quit (z-direction=%d)",
@@ -171,7 +175,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    usleep(DELAY);
+    // usleep(DELAY);
   }
   endwin();
   return 0;
